@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RTK asemien sijainnit Suomessa</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #mapid { height: 600px; }
+    </style>
+</head>
+<body>
+    <h2>RTK asemien sijainnit Suomessa</h2>
+    <div id="mapid"></div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var mymap = L.map('mapid').setView([65.012, 25.465], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(mymap);
+
+        fetch('/stations')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(station => {
+                    var latlng = [station.lat, station.lon];
+                    L.marker(latlng).addTo(mymap)
+                        .bindPopup(station.stationName +", "+ station.municipality);
+                });
+            })
+            .catch(error => console.log(error));
+    </script>
+</body>
+</html>
