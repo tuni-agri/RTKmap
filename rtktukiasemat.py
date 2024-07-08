@@ -1,15 +1,10 @@
 
-from flask import Flask, jsonify, render_template
 import requests
 import re
+import json
 
-app = Flask(__name__)
+# talla koodilla haetaan pisteet ja muodostetaan json tiedosto
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/stations')
 def stations():
     try:
         # Hae RTK-asemien tiedot
@@ -30,10 +25,15 @@ def stations():
             'stationName':stationInfo[1],
             'municipality':stationInfo[2]})
 
+        with open('points.json', 'w') as f:
+            json.dump(stations_data, f, indent=4)
             
-        return jsonify(stations_data)
+        return stations_data
     except requests.RequestException as e:
-        return jsonify(error=str(e)), 500
-if __name__ == '__main__':
-    app.run(debug=True)
+        return {'error': str(e)}
 
+
+
+# Aja tämä funktio päivittääksesi points.json-tiedoston tai käytä saatua dataa suoraan
+stations_data = stations()
+print(json.dumps(stations_data, indent=4))
