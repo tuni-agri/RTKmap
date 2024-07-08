@@ -18,7 +18,7 @@
             attribution: '© OpenStreetMap contributors'
         }).addTo(mymap);
 
-        fetch('/stations')
+        fetch('/points')
             .then(response => response.json())
             .then(data => {
                 data.forEach(station => {
